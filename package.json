@@ -1,0 +1,39 @@
+{
+  "name": "plantnet",
+  "version": "1.0.0",
+  "description": "Plantnet",
+  "main": "server.js",
+  "type": "module",
+  "dependencies": {
+    "@apollo/federation": "0.37.1",
+    "apollo-server-core": "3.4.0",
+    "apollo-server-fastify": "3.4.0",
+    "fastify": "3.22.1",
+    "fastify-raw-body": "3.2.0",
+    "got": "^12.5.2",
+    "graphql": "15.8.0",
+    "jwt-encode": "1.0.1",
+    "mysql2": "2.3.2",
+    "node-fetch": "3.0.0",
+    "sha1": "1.1.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ENV_ID=dev nodemon app/plantnet.js",
+    "start": "ENV_ID=prod node app/plantnet.js",
+    "deploy": "make"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/gratheon/plantnet.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/gratheon/plantnet/issues"
+  },
+  "homepage": "https://gitlab.com/gratheon/plantnet#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
