@@ -3,7 +3,7 @@ services:
   plantnet:
     build: .
     command:
-      ./node_modules/.bin/nodemon app/plantnet.js --watch app --watch config -L
+      /app/node_modules/.bin/nodemon app/plantnet.js --watch app --watch config -L
     ports:
       - 8090:8090
     volumes:
