@@ -14,3 +14,8 @@ flowchart LR
     plantnet --"register schema"-->graphql-schema-registry
     graphql-router --> graphql-schema-registry
 ```
+
+## Development
+```bash
+just start
+```
