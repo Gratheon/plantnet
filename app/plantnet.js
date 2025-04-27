@@ -7,6 +7,7 @@ import { schema } from './schema.js';
 import { resolvers } from './resolvers.js';
 import { initStorage } from "./storage.js";
 import { registerSchema } from "./schema-registry.js";
+import { rootHandler } from "./rootHandler.js";
 
 function fastifyAppClosePlugin(app) {
 	return {
@@ -46,6 +47,7 @@ async function startApolloServer(app, typeDefs, resolvers) {
 	initStorage();
 
 	const app = fastify();
+	app.get('/', rootHandler);
 	app.get('/health', (request, reply) => {
 		reply.send({ hello: 'world' })
 	})
