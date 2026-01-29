@@ -6,7 +6,12 @@ services:
     ports:
       - 8090:8090
     volumes:
-      - .:/app/
+      - ./src:/app/src
+      - ./config:/app/config
+      - ./migrations:/app/migrations
+      - ./.version:/app/.version
+      - /app/node_modules
     restart: always
     environment:
       - ENV_ID=dev
+      - NODE_OPTIONS=--enable-source-maps

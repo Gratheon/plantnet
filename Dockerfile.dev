@@ -1,7 +1,15 @@
-FROM node:16-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
-EXPOSE 4000
+ENV NODE_ENV=development
 
-CMD ["node", "app/plantnet.js"]
+COPY package.json package-lock.json* ./
+RUN npm install --include=dev
+
+COPY src/config ./src/config
+COPY .version* ./
+
+EXPOSE 8090
+
+CMD npm run dev-in-docker

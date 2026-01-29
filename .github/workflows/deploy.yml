@@ -1,16 +1,23 @@
-name: deploy
+name: Deploy
 on:
-  push:
-    branches: main
+  workflow_run:
+    workflows: ["Test"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: self-hosted
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     steps:
       - name: pull
         working-directory: /www/plantnet/
         run: git reset --hard && git pull
+
+      - name: build
+        working-directory: /www/plantnet/
+        run: npm ci && npm run build
 
       - name: restart
         working-directory: /www/plantnet/

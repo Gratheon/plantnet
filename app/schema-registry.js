@@ -1,45 +1,50 @@
-import fs from 'fs';
-import { resolve, dirname } from 'path';
-import fetch from "node-fetch";
-import { print } from "graphql";
-import config from "../config/config.js";
-
-const packageJson = JSON.parse(fs.readFileSync(resolve('package.json'), 'utf8'));
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.registerSchema = registerSchema;
+const fs_1 = __importDefault(require("fs"));
+const path_1 = require("path");
+const node_fetch_1 = __importDefault(require("node-fetch"));
+const graphql_1 = require("graphql");
+const config_1 = __importDefault(require("./config"));
+const logger_1 = require("./logger");
+const packageJson = JSON.parse(fs_1.default.readFileSync((0, path_1.resolve)('package.json'), 'utf8'));
 async function postData(url = '', data = {}) {
-	// Default options are marked with *
-	const response = await fetch(url, {
-		method: 'POST',
-		mode: 'cors', // no-cors, *cors, same-origin
-		cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-		credentials: 'same-origin', // include, *same-origin, omit
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		redirect: 'follow', // manual, *follow, error
-		referrerPolicy: 'no-referrer', // no-referrer, *client
-		body: JSON.stringify(data) // body data type must match "Content-Type" header
-	});
-
-	if (!response.ok){
-		console.error(`schema-registry respose code ${response.status}: ${response.statusText}`);
-		return false;
-	}
-	return await response.json(); // parses JSON response into native JavaScript objects
+    const response = await (0, node_fetch_1.default)(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+        logger_1.logger.error(`schema-registry response code ${response.status}: ${response.statusText}`);
+        return false;
+    }
+    return await response.json();
 }
-
-export async function registerSchema(schema) {
-	const url = `${config.schemaRegistryHost}/schema/push`
-	const version = fs.readFileSync("./.version", "utf8");
-
-	try{
-		await postData(url, {
-			"name": packageJson.name,
-			"url": config.selfUrl,
-			"version": process.env.ENV_ID === 'dev' ? "latest" : version,
-			"type_defs": print(schema)
-		});
-	} catch (e){
-		console.error(e);
-	}
+async function registerSchema(schema) {
+    const url = `${config_1.default.schemaRegistryHost}/schema/push`;
+    let version = "latest";
+    try {
+        version = fs_1.default.readFileSync((0, path_1.resolve)('.version'), "utf8").trim();
+    }
+    catch (e) {
+        logger_1.logger.warn('No .version file found, using "latest"');
+    }
+    try {
+        await postData(url, {
+            "name": packageJson.name,
+            "url": config_1.default.selfUrl,
+            "version": process.env.ENV_ID === 'dev' ? "latest" : version,
+            "type_defs": (0, graphql_1.print)(schema)
+        });
+        logger_1.logger.info('Schema registered successfully');
+    }
+    catch (e) {
+        logger_1.logger.error(e);
+    }
 }
+//# sourceMappingURL=schema-registry.js.map

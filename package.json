@@ -2,26 +2,42 @@
   "name": "plantnet",
   "version": "1.0.0",
   "description": "Plantnet",
-  "main": "server.js",
-  "type": "module",
-  "dependencies": {
-    "@apollo/federation": "0.37.1",
-    "apollo-server-core": "3.4.0",
-    "apollo-server-fastify": "3.4.0",
-    "fastify": "3.22.1",
-    "fastify-raw-body": "3.2.0",
-    "got": "12.5.2",
-    "graphql": "15.8.0",
-    "jwt-encode": "1.0.1",
-    "mysql2": "2.3.2",
-    "node-fetch": "3.0.0",
-    "sha1": "1.1.1"
-  },
+  "main": "app/plantnet.js",
   "scripts": {
+    "build": "tsc -p ./src/config/tsconfig.json",
+    "typecheck": "tsc -p ./src/config/tsconfig.json --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "test:unit": "jest --config ./test/unit/jest.config.js --detectOpenHandles --forceExit",
+    "test:integration": "jest --config ./test/integration/jest.config.js --detectOpenHandles --forceExit",
     "dev": "ENV_ID=dev nodemon app/plantnet.js",
+    "dev:ts": "ENV_ID=dev ts-node-dev --respawn --transpile-only --prefer-ts --exit-child src/plantnet.ts",
+    "dev-in-docker": "ts-node-dev --respawn --transpile-only --prefer-ts --exit-child --project src/config/tsconfig.json src/plantnet.ts",
     "start": "ENV_ID=prod node app/plantnet.js",
     "deploy": "make"
+  },
+  "dependencies": {
+    "@apollo/federation": "0.38.1",
+    "@databases/mysql": "^7.0.0",
+    "@sentry/node": "^10.37.0",
+    "apollo-server-core": "^3.13.0",
+    "apollo-server-fastify": "^3.13.0",
+    "fast-safe-stringify": "^2.1.1",
+    "fastify": "^3.29.5",
+    "graphql": "15.8.0",
+    "jwt-encode": "1.0.1",
+    "mysql2": "^3.11.5",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "nodemon": "^3.1.11",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.2.2"
   },
   "repository": {
     "type": "git",
@@ -32,8 +48,5 @@
   "bugs": {
     "url": "https://gitlab.com/gratheon/plantnet/issues"
   },
-  "homepage": "https://gitlab.com/gratheon/plantnet#readme",
-  "devDependencies": {
-    "nodemon": "^2.0.22"
-  }
+  "homepage": "https://gitlab.com/gratheon/plantnet#readme"
 }
