@@ -56,7 +56,7 @@ function isStorageConnected() {
 async function tryConnect() {
     try {
         const baseDsn = `mysql://${config_1.default.mysql.user}:${config_1.default.mysql.password}@${config_1.default.mysql.host}:${config_1.default.mysql.port}`;
-        const poolOptions = `?connectionLimit=5&waitForConnections=true`;
+        const poolOptions = `?connectionLimit=5&waitForConnections=true&connectTimeout=10000`;
         const conn = (0, mysql_1.default)(`${baseDsn}/${poolOptions}`);
         await conn.query((0, mysql_1.sql) `CREATE DATABASE IF NOT EXISTS \`plantnet\` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;`);
         await conn.query((0, mysql_1.sql) `CREATE DATABASE IF NOT EXISTS \`logs\` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;`);
@@ -64,15 +64,34 @@ async function tryConnect() {
         db = (0, mysql_1.default)({
             connectionString: `${baseDsn}/${config_1.default.mysql.database}${poolOptions}`,
             bigIntMode: 'number',
-            poolSize: 3,
-            maxUses: 200,
-            idleTimeoutMilliseconds: 120000,
+            poolSize: 5,
+            maxUses: 100,
+            idleTimeoutMilliseconds: 30000,
             queueTimeoutMilliseconds: 60000,
             onError: (err) => {
-                var _a;
+                var _a, _b, _c, _d;
                 if (!((_a = err.message) === null || _a === void 0 ? void 0 : _a.includes('packets out of order'))) {
                     logger_1.logger.error(`MySQL connection pool error: ${err.message}`);
+                    if (((_b = err.message) === null || _b === void 0 ? void 0 : _b.includes('disconnected by the server')) ||
+                        ((_c = err.message) === null || _c === void 0 ? void 0 : _c.includes('Connection lost')) ||
+                        ((_d = err.message) === null || _d === void 0 ? void 0 : _d.includes('PROTOCOL_CONNECTION_LOST'))) {
+                        isConnected = false;
+                        logger_1.logger.warn('Connection lost, attempting to reconnect...');
+                        setTimeout(() => tryConnect(), 5000);
+                    }
                 }
+            },
+            onQueryError: (query, { text }, err) => {
+                logger_1.logger.error('MySQL query error', {
+                    query: text,
+                    error: err.message
+                });
+            },
+            onConnectionOpened: () => {
+                logger_1.logger.debug('MySQL connection opened');
+            },
+            onConnectionClosed: () => {
+                logger_1.logger.debug('MySQL connection closed');
             },
         });
         await db.query((0, mysql_1.sql) `SELECT 1`);
