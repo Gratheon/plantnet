@@ -1,13 +1,28 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const storage_1 = require("../storage");
-const mysql_1 = require("@databases/mysql");
-exports.default = {
-    getPlants: async function (lat, lng) {
+import { storage } from "../storage";
+import { sql } from '@databases/mysql';
+
+export interface Plant {
+    gbifID: string;
+    URL: string;
+    scientificName: string;
+    distance: number;
+}
+
+export interface PlantImage {
+    URL: string;
+    title: string;
+    source: string;
+    created: Date;
+    creator: string;
+}
+
+export default {
+    getPlants: async function (lat: string, lng: string): Promise<Plant[]> {
         const km = 5;
         const latNum = parseFloat(lat);
         const lngNum = parseFloat(lng);
-        const results = await (0, storage_1.storage)().query((0, mysql_1.sql) `
+        
+        const results = await storage().query(sql`
             SELECT gbifID, \`references\` as URL, scientificName, 
                    st_distance_sphere(point(${latNum}, ${lngNum}), coord) as distance
             FROM occurence FORCE INDEX(coord) 
@@ -17,16 +32,18 @@ exports.default = {
             ), coord)
             LIMIT 10
         `);
-        return results;
+
+        return results as Plant[];
     },
-    getPlantImages: async function (gbifID) {
-        const results = await (0, storage_1.storage)().query((0, mysql_1.sql) `
+    
+    getPlantImages: async function (gbifID: string): Promise<PlantImage[]> {
+        const results = await storage().query(sql`
             SELECT identifier as URL, title, source, created, creator
             FROM multimedia
             WHERE gbifID=${gbifID}
             LIMIT 3
         `);
-        return results;
+
+        return results as PlantImage[];
     },
-};
-//# sourceMappingURL=plants.js.map
+}

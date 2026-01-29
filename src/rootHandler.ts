@@ -1,12 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.rootHandler = rootHandler;
-function rootHandler(request, reply) {
+import { FastifyRequest, FastifyReply } from 'fastify';
+
+// Plantnet rootHandler based on user-cycle
+
+export function rootHandler(request: FastifyRequest, reply: FastifyReply): void {
     const endpoints = [
         { method: 'GET', path: '/', description: 'This documentation page' },
         { method: 'GET', path: '/health', description: 'Health check endpoint' },
         { method: 'GET', path: '/graphql', description: 'GraphQL playground' }
     ];
+
+    // Logo SVG inline (copied from user-cycle)
     const logoSvg = `<?xml version="1.0" encoding="utf-8"?>
 <svg viewBox="0 0 500 147" xmlns="http://www.w3.org/2000/svg">
   <rect x="23.544" y="53.731" width="456.888" height="76.722" style="stroke-linejoin: round; stroke-width: 25px; stroke-linecap: round; stroke: rgb(255, 255, 255); fill: rgb(255, 255, 255);"/>
@@ -67,6 +70,7 @@ function rootHandler(request, reply) {
   <path d="M 400.653 96.948 C 400.678 107.346 395.099 114.542 390.058 118.695 C 385.017 122.848 380.947 125.923 370.299 125.923 C 359.105 125.923 352.808 121.733 348.232 117.03 C 343.703 112.428 339.049 104.04 339.575 94.016 C 339.972 86.451 343.022 79.1 349.287 73.395 C 355.811 67.454 361.438 65.098 370.226 65.235 C 379.876 65.385 383.834 68.09 388.378 71.169 C 393.004 74.304 394.727 76.966 396.982 80.739 C 400.136 86.015 400.633 88.519 400.653 96.948 Z M 392.137 97.284 C 392.429 87.093 388.224 82.028 385.545 79.358 C 382.113 75.937 376.225 73.372 370.703 73.372 C 365.18 73.372 359.644 74.894 355.627 79.022 C 351.61 83.15 348.077 86.433 348.077 95.789 C 348.077 104.408 352.954 110.182 355.884 112.649 C 359.081 115.341 364.723 118.023 370.048 118.023 C 375.271 118.023 381.502 115.436 383.657 113.385 C 386.199 110.967 391.874 106.471 392.137 97.284 Z" style="stroke: rgb(255, 255, 255); stroke-width: 0px;"/>
   <path d="M 412.585 62.353 L 455.59 107.297 L 455.68 66.226 L 464.378 66.279 L 464.349 128.492 C 464.349 128.492 421.335 83.531 421.382 83.862 L 421.342 125.014 L 412.524 124.947 L 412.585 62.353 Z" style="stroke: rgb(255, 255, 255); stroke-width: 0px;"/>
 </svg>`;
+
     const html = `
     <!DOCTYPE html>
     <html>
@@ -110,6 +114,6 @@ function rootHandler(request, reply) {
     </body>
     </html>
     `;
+
     reply.type('text/html').send(html);
 }
-//# sourceMappingURL=rootHandler.js.map

@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.schema = void 0;
-const apollo_server_core_1 = require("apollo-server-core");
-exports.schema = (0, apollo_server_core_1.gql) `
+import { gql } from "apollo-server-core";
+
+export const schema = gql`
     scalar JSON
     scalar DateTime
     scalar URL
@@ -27,4 +25,3 @@ exports.schema = (0, apollo_server_core_1.gql) `
 			creator: String
 		}
 `;
-//# sourceMappingURL=schema.js.map
