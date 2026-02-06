@@ -22,7 +22,7 @@
     "apollo-server-core": "^3.13.0",
     "apollo-server-fastify": "^3.13.0",
     "fast-safe-stringify": "^2.1.1",
-    "fastify": "^3.29.5",
+    "fastify": "^5.7.3",
     "graphql": "15.8.0",
     "jwt-encode": "1.0.1",
     "mysql2": "^3.11.5",
