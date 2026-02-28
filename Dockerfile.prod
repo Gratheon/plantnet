@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM platformatic/node-caged:25-slim AS builder
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY .version ./.version
 
 RUN npm run build
 
-FROM node:20-alpine
+FROM platformatic/node-caged:25-slim
 
 WORKDIR /app
 
