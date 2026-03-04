@@ -7,9 +7,9 @@ ENV NODE_ENV=development
 COPY package.json package-lock.json* ./
 RUN npm install --include=dev
 
-COPY src/config ./src/config
+COPY src ./src
 COPY .version* ./
 
 EXPOSE 8090
 
-CMD npm run dev-in-docker
+CMD ["npm", "run", "dev-in-docker"]

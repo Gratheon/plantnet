@@ -16,14 +16,14 @@
     "deploy": "make"
   },
   "dependencies": {
-    "@apollo/federation": "0.38.1",
+    "@apollo/server": "^4.12.2",
+    "@apollo/subgraph": "^2.11.3",
+    "@as-integrations/fastify": "^3.1.0",
     "@databases/mysql": "^7.0.0",
     "@sentry/node": "^10.37.0",
-    "apollo-server-core": "^3.13.0",
-    "apollo-server-fastify": "^3.13.0",
     "fast-safe-stringify": "^2.1.1",
-    "fastify": "^3.29.5",
-    "graphql": "15.8.0",
+    "fastify": "5.7.4",
+    "graphql": "16.13.0",
     "jwt-encode": "1.0.1",
     "mysql2": "^3.11.5",
     "node-fetch": "^3.3.2"

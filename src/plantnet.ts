@@ -1,8 +1,10 @@
 import "./sentry";
-import { ApolloServer } from "apollo-server-fastify";
-import { ApolloServerPluginDrainHttpServer, ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+import { ApolloServer } from "@apollo/server";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
+import fastifyApollo, { fastifyApolloDrainPlugin } from "@as-integrations/fastify";
 import fastify, { FastifyInstance } from "fastify";
-import { buildSubgraphSchema } from '@apollo/federation';
+import { buildSubgraphSchema } from "@apollo/subgraph";
 import { logger } from './logger';
 import { schema } from './schema';
 import { resolvers } from './resolvers';
@@ -10,6 +12,10 @@ import { initStorage, isStorageConnected } from "./storage";
 import { registerSchema } from "./schema-registry";
 import { rootHandler } from "./rootHandler";
 import { Sentry } from "./sentry";
+
+interface ApolloContext {
+    uid?: string;
+}
 
 // Enable source maps in development
 if (process.env.ENV_ID === 'dev') {
@@ -37,25 +43,27 @@ function fastifyAppClosePlugin(app: FastifyInstance) {
 }
 
 async function startApolloServer(app: FastifyInstance, typeDefs: any, resolvers: any): Promise<string> {
-    const server = new ApolloServer({
-        typeDefs: buildSubgraphSchema(typeDefs),
-        resolvers,
+    const server = new ApolloServer<ApolloContext>({
+        schema: buildSubgraphSchema([{ typeDefs, resolvers }]),
         plugins: [
             fastifyAppClosePlugin(app),
-            ApolloServerPluginLandingPageGraphQLPlayground(),
+            fastifyApolloDrainPlugin(app),
+            ApolloServerPluginLandingPageLocalDefault({ embed: true }),
             ApolloServerPluginDrainHttpServer({ httpServer: app.server })
         ],
-        context: (req) => {
-            return {
-                uid: req.request.raw.headers['internal-userid']
-            };
-        },
     });
 
     await server.start();
-    app.register(server.createHandler());
+    app.register(fastifyApollo(server), {
+        path: '/graphql',
+        context: async (request): Promise<ApolloContext> => ({
+            uid: Array.isArray(request.headers['internal-userid'])
+                ? request.headers['internal-userid'][0]
+                : request.headers['internal-userid']
+        })
+    });
 
-    return server.graphqlPath;
+    return '/graphql';
 }
 
 (async function main() {
@@ -75,7 +83,7 @@ async function startApolloServer(app: FastifyInstance, typeDefs: any, resolvers:
         
         // Global error handler
         app.setErrorHandler(async (error, request, reply) => {
-            logger.error(error);
+            logger.error(error as Error);
             
             if (Sentry) {
                 Sentry.withScope(function (scope) {

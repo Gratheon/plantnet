@@ -1,6 +1,6 @@
-import { gql } from "apollo-server-core";
+import { parse } from "graphql";
 
-export const schema = gql`
+export const schema = parse(/* GraphQL */ `
     scalar JSON
     scalar DateTime
     scalar URL
@@ -24,4 +24,4 @@ export const schema = gql`
 			created: DateTime
 			creator: String
 		}
-`;
+`);

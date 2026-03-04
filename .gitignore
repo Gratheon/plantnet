@@ -1,7 +1,7 @@
 node_modules
 .dccache
 .idea
-config
+/config
 src/config/config.dev.ts
 src/config/config.prod.ts
 app
