@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p ./src/config/tsconfig.json",
     "typecheck": "tsc -p ./src/config/tsconfig.json --noEmit",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --config ./test/deployment.jest.config.json",
     "test:unit": "jest --config ./test/unit/jest.config.js --detectOpenHandles --forceExit",
     "test:integration": "jest --config ./test/integration/jest.config.js --detectOpenHandles --forceExit",
     "dev": "ENV_ID=dev nodemon app/plantnet.js",

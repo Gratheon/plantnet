@@ -1,0 +1,12 @@
+{
+  "rootDir": "../",
+  "testMatch": ["<rootDir>/test/deployment.contract.test.ts"],
+  "transform": {
+    "^.+\\.(ts)$": [
+      "ts-jest",
+      {
+        "tsconfig": "<rootDir>/src/config/tsconfig.json"
+      }
+    ]
+  }
+}

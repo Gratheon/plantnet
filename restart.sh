@@ -1,4 +1,32 @@
-sudo -H -u www bash -c 'cd /www/plantnet/ && npm i' 
-cd /www/plantnet/
-COMPOSE_PROJECT_NAME=gratheon docker-compose down
-COMPOSE_PROJECT_NAME=gratheon docker-compose up --build -d
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_NAME="${COMPOSE_PROJECT_NAME:-plantnet}"
+COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.yml}"
+LEGACY_PROJECT_NAME="${LEGACY_PROJECT_NAME:-gratheon}"
+SERVICE_NAME="${SERVICE_NAME:-plantnet}"
+
+cd "$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+
+stop_legacy_gratheon_service_container() {
+  # WHY: older deploys used the shared gratheon Compose project. Remove only this
+  # service container so unrelated gratheon-project services keep running.
+  docker ps -aq \
+    --filter "label=com.docker.compose.project=${LEGACY_PROJECT_NAME}" \
+    --filter "label=com.docker.compose.service=${SERVICE_NAME}" \
+    | while IFS= read -r container_id; do
+        [ -n "$container_id" ] || continue
+        docker rm -f "$container_id" >/dev/null 2>&1 || true
+      done
+}
+
+stop_legacy_gratheon_service_container
+
+if id www >/dev/null 2>&1; then
+  sudo -H -u www bash -c "cd '$(pwd)' && npm i"
+else
+  npm ci
+fi
+
+COMPOSE_PROJECT_NAME="$PROJECT_NAME" docker-compose -f "$COMPOSE_FILE" down
+COMPOSE_PROJECT_NAME="$PROJECT_NAME" docker-compose -f "$COMPOSE_FILE" up --build -d

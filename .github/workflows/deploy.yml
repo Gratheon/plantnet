@@ -22,3 +22,7 @@ jobs:
       - name: restart
         working-directory: /www/plantnet/
         run: chmod +x restart.sh && ./restart.sh
+
+      - name: Verify production deployment
+        working-directory: /www/plantnet/
+        run: chmod +x scripts/verify-production-deployment.sh && ./scripts/verify-production-deployment.sh
