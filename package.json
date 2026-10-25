@@ -13,7 +13,8 @@
     "dev:ts": "ENV_ID=dev ts-node-dev --respawn --transpile-only --prefer-ts --exit-child src/plantnet.ts",
     "dev-in-docker": "ts-node-dev --respawn --transpile-only --prefer-ts --exit-child --project src/config/tsconfig.json src/plantnet.ts",
     "start": "ENV_ID=prod node app/plantnet.js",
-    "deploy": "make"
+    "deploy": "make",
+    "lint": "oxlint"
   },
   "dependencies": {
     "@apollo/server": "^4.12.2",
@@ -29,12 +30,13 @@
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@types/node": "^20.17.10",
     "@types/jest": "^29.5.14",
+    "@types/node": "^20.17.10",
     "jest": "^29.7.0",
-    "ts-jest": "^29.2.5",
     "nodemon": "^3.1.11",
+    "oxlint": "1.89.0",
     "source-map-support": "^0.5.21",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"
